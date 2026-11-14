@@ -9,6 +9,8 @@
 | --- | --- | --- | --- | --- |
 | 01 | StarTrailSky (별의 일주 운동) | 스카이박스 | `Assets/00. Scenes/MyShader_StarTrailSky.unity` | [바로가기](#01-startrailsky-매뉴얼) |
 | 02 | Blizzard (눈보라) | 파티클 | `Assets/00. Scenes/MyShader_Blizzard.unity` | [바로가기](#02-blizzard-매뉴얼) |
+| 03 | FrozenSurface (얼어붙는 표면) | 3D 오브젝트 (Shader Graph) | `Assets/00. Scenes/MyShader_FrozenSurface.unity` | [바로가기](#03-frozensurface-매뉴얼) |
+| 04 | LensFrost (렌즈 서리) | 화면 효과 (Shader Graph Fullscreen) | `Assets/00. Scenes/MyShader_LensFrost.unity` | [바로가기](#04-lensfrost-매뉴얼) |
 
 ---
 
@@ -125,6 +127,79 @@
 
 ### 데모 씬 다시 만들기
 메뉴 `MyShaders > Build Blizzard Demo`는 데모 씬과 두 머티리얼을 **기본값으로 덮어써서** 다시 만듭니다. 에디터에서 값을 다듬은 뒤에는 실행하지 마세요.
+
+---
+
+## 03. FrozenSurface 매뉴얼
+
+물체가 아래에서부터 얼음으로 뒤덮이는 Shader Graph(URP Lit) 표면 셰이더입니다. 얼음 경계는 노이즈로 일렁이며 빛나고, 얼음 부분은 결정 무늬·요철·림 라이트·반짝임을 가집니다. 조명과 그림자를 그대로 받습니다.
+
+### 파일 위치
+| 경로 | 설명 |
+| --- | --- |
+| `Assets/02. MyShaders/03_FrozenSurface/FrozenSurface.shadergraph` | 셰이더 그래프 (`MyShaders/FrozenSurface`). 더블클릭하면 노드를 볼 수 있습니다 |
+| `FrozenSurface_Half.mat` | 볼 1: 붉은 표면이 절반쯤 얼어 있음 |
+| `FrozenSurface.mat` | 볼 2: 초록 표면이 **얼었다 녹았다 반복** (Animate Freeze = 1) |
+| `FrozenSurface_Metal.mat` | 볼 3: 금속(금색) 표면이 거의 다 얼어 있음 |
+| `Assets/00. Scenes/MyShader_FrozenSurface.unity` | 데모 씬 (`Study Shader` 씬을 복사해 셰이더볼 3개에 적용. 원본 씬은 그대로) |
+
+### 보는 방법
+데모 씬을 엽니다. 볼 2의 애니메이션은 Play 모드에서, 또는 Scene 뷰의 `Always Refresh`를 켜면 움직입니다. 다른 물체에 쓰려면 머티리얼을 드래그해서 넣고 **Freeze Bottom / Top을 그 물체의 높이에 맞춥니다**.
+
+### 조정하는 곳: 머티리얼 인스펙터
+| 프로퍼티 | 무엇이 바뀌나 | 팁 |
+| --- | --- | --- |
+| Base Color / Smoothness / Metallic | 얼지 않은 원래 표면 | |
+| **Freeze Amount** | 얼음이 차오른 높이 (0 = 없음, 1 = 전체) | 가장 먼저 만져 볼 값 |
+| Freeze Bottom / Top (world Y) | 얼음이 차오르는 높이 범위(월드 좌표) | 물체의 바닥/꼭대기 높이로 맞추기. 데모 볼은 0.32 ~ 1.29 |
+| Animate Freeze | 0 = Freeze Amount 고정, 1 = 시간에 따라 얼었다 녹았다 | 중간값이면 둘이 섞임 |
+| Animate Speed | 얼었다 녹는 속도 | |
+| Edge Noise Scale / Amount | 얼음 경계의 일렁임 크기, 높낮이 차이(월드 단위) | Amount 0이면 반듯한 수평선 |
+| Ice Blend Width | 원래 표면 → 얼음으로 바뀌는 폭 | 작을수록 경계가 또렷 |
+| Edge Glow Color / Width | 얼음 경계에서 빛나는 띠의 색(HDR)과 두께 | 색을 검게 하면 빛나는 띠 없음 |
+| Ice Color / Ice Deep Color | 결정 가장자리(밝은)와 결정 안쪽(깊은) 색 | |
+| Crystal Density | 결정 무늬 촘촘함 | 크게 하면 잘게 부서진 얼음 |
+| Ice Smoothness | 얼음의 매끈함(반사) | |
+| Ice Bump Strength | 결정 요철 세기 | 크면 골프공처럼 보이므로 0.01~0.03 권장 |
+| Rim Color / Rim Power | 얼음 가장자리가 빛나는 색(HDR), 퍼짐 정도 | Power가 클수록 테두리에만 얇게 |
+| Sparkle Scale / Threshold / Intensity | 서리 반짝이 크기, 개수(높을수록 적음), 밝기 | |
+
+---
+
+## 04. LensFrost 매뉴얼
+
+카메라 렌즈에 서리가 낀 것처럼 화면 가장자리부터 하얗게 얼어 들어오는 Shader Graph **Fullscreen** 셰이더입니다. 서리 부분은 뒤의 장면이 결정 모양으로 굴절되고 뿌옇게 흐려집니다.
+
+### 파일 위치
+| 경로 | 설명 |
+| --- | --- |
+| `Assets/02. MyShaders/04_LensFrost/LensFrost.shadergraph` | 셰이더 그래프 (`MyShaders/LensFrost`) |
+| `Assets/02. MyShaders/04_LensFrost/LensFrost.mat` | 머티리얼 — **값은 여기서 조정합니다** |
+| `Assets/02. MyShaders/04_LensFrost/LensFrost_Renderer.asset` | 서리 전용 URP 렌더러 (Full Screen Pass 기능 포함) |
+| `Assets/00. Scenes/MyShader_LensFrost.unity` | 데모 씬 (눈보라 씬에 서리 렌더러를 쓰는 카메라) |
+
+### 다른 씬에 영향을 주지 않는 구조
+화면 효과는 URP 렌더러의 **Full Screen Pass Renderer Feature**로 그립니다. 기본 렌더러(`PC_Renderer`)에 넣으면 모든 씬에 서리가 끼기 때문에, 전용 렌더러 `LensFrost_Renderer`를 만들어 `PC_RPAsset`/`Mobile_RPAsset`의 렌더러 목록 **2번째(index 1)** 에 추가만 했습니다. 기본 렌더러는 그대로이며, 데모 씬의 `Main Camera`만 `Rendering > Renderer`를 `LensFrost_Renderer`로 고릅니다.
+
+- 다른 씬에 서리를 쓰려면: 그 씬의 카메라 `Rendering > Renderer`를 `LensFrost_Renderer`로 바꿉니다.
+- 서리를 끄려면: 카메라 Renderer를 기본(`PC_Renderer`)으로 되돌리거나, `LensFrost_Renderer` 인스펙터에서 `LensFrost` 기능의 체크를 끕니다.
+
+### 조정하는 곳: `LensFrost.mat` 인스펙터
+| 프로퍼티 | 무엇이 바뀌나 | 팁 |
+| --- | --- | --- |
+| **Coverage** | 서리가 화면을 덮은 정도 (0 = 없음, 1 = 거의 전체) | 0에서 올리며 얼어 들어오는 과정을 볼 수 있음 |
+| Edge Softness | 서리 경계가 부드럽게 번지는 폭 | |
+| Edge Noise Scale / Amount | 서리 경계가 불규칙하게 파고드는 무늬 크기와 깊이 | Amount 0이면 매끈한 사각 비네트 |
+| Crystal Density | 굴절을 만드는 결정 면의 촘촘함 | |
+| Refraction | 서리 뒤 장면이 결정 모양으로 꺾이는 정도 | 0이면 굴절 없이 뿌옇기만 |
+| Blur Radius | 서리 뒤 장면이 흐려지는 정도 | 너무 크면 겹쳐 보임 (5방향 샘플) |
+| Frost Color / Frost Opacity | 서리 색, 불투명도 | |
+| Mottle Scale | 서리 두께가 얼룩덜룩한 무늬 크기 | |
+| Grain Scale / Grain Amount | 서리 입자 크기, 입자감 세기 | |
+| Crystal Highlight | 반짝이는 얼음 입자 밝기 | |
+
+### 데모 씬 다시 만들기
+메뉴 `MyShaders > Build Frozen Surface Demo`, `MyShaders > Build Lens Frost Demo`는 데모 씬과 머티리얼을 **기본값으로 덮어써서** 다시 만듭니다. 에디터에서 값을 다듬은 뒤에는 실행하지 마세요.
 
 ## 셰이더볼 사용법
 

@@ -4,6 +4,10 @@
 | --- | --- | --- | --- | --- |
 | 01 | StarTrailSky | 스카이박스 | HLSL | `Assets/00. Scenes/MyShader_StarTrailSky.unity` |
 | 02 | Blizzard | 파티클 이펙트 | HLSL (정점 셰이더 + Custom Vertex Streams) | `Assets/00. Scenes/MyShader_Blizzard.unity` |
+| 03 | FrozenSurface | 3D 오브젝트 표면 | Shader Graph (URP Lit) | `Assets/00. Scenes/MyShader_FrozenSurface.unity` |
+| 04 | LensFrost | 화면 효과 (후처리) | Shader Graph (URP Fullscreen) + Full Screen Pass | `Assets/00. Scenes/MyShader_LensFrost.unity` |
+
+네 셰이더는 "겨울밤"이라는 하나의 테마로 묶여 있지만, 분야(하늘 / 파티클 / 물체 표면 / 화면)와 방식(HLSL 2개, Shader Graph 2개)이 모두 다릅니다.
 
 ---
 
@@ -77,3 +81,40 @@ Particle System은 눈송이의 위치·속도·크기만 정하고, 모양과 �
 ### 참고
 - Soft Particle은 URP 에셋의 **Depth Texture**가 켜져 있어야 한다 (`PC_RPAsset`은 켜져 있음). 꺼진 환경에서는 머티리얼의 Soft Particles 토글을 끈다.
 - 정점 셰이더가 Custom Vertex Streams 순서에 의존하므로, 다른 파티클 시스템에 쓸 때는 Renderer의 Custom Vertex Streams를 위 순서대로 맞춰야 한다.
+
+---
+
+## 03. FrozenSurface — 아래에서부터 얼어붙는 표면
+
+![FrozenSurface](Screenshots/03_FrozenSurface.png)
+
+- 경로: `Assets/02. MyShaders/03_FrozenSurface/FrozenSurface.shadergraph` (`MyShaders/FrozenSurface`, URP Lit 타깃)
+- 머티리얼 3종: `FrozenSurface_Half.mat`(반쯤 언 붉은 표면), `FrozenSurface.mat`(얼었다 녹았다 반복), `FrozenSurface_Metal.mat`(거의 다 언 금속)
+- 셰이더볼 3개에 적용한 데모 씬. 텍스처 없이 노드만으로 만들었다.
+
+### 동작 원리 (그래프 순서대로)
+1. **얼음 높이(Freeze Front)**: `Freeze Amount`(0~1)로 `Freeze Bottom`~`Freeze Top` 사이의 높이를 `Lerp`해서 얼음이 차오른 월드 Y 높이를 정한다. `Animate Freeze`를 켜면 `Time → Sine`으로 만든 0~1 값을 대신 써서 얼었다 녹았다 반복한다.
+2. **일렁이는 경계**: 월드 위치 `(x+z, y)`를 UV로 쓴 `Simple Noise`를 경계 높이에 더한다. `경계 높이 − 픽셀 높이 > 0`이면 얼음이고, `Smoothstep`으로 원래 표면과 얼음을 부드럽게 섞을 마스크(iceMask)를 만든다.
+3. **빛나는 얼음선**: 같은 거리 값의 절댓값으로 경계에서만 1이 되는 띠(`Abs → Divide → One Minus → Saturate → Power`)를 만들어 HDR 색을 곱해 Emission에 더한다.
+4. **결정 무늬 (바이플래너)**: `Voronoi`를 XY 평면과 ZY 평면에 각각 투영하고, 표면 법선의 X/Z 성분 비율로 섞는다. 한 방향 투영만 쓰면 옆면에서 무늬가 길게 늘어나기 때문이다. Voronoi 거리값으로 깊은 색↔밝은 색을 섞고, 셀마다 다른 값(Cells)으로 결정마다 밝기를 다르게 한다.
+5. **요철**: 같은 Voronoi 값을 `Normal From Height`로 노멀로 바꾸고, `Normal Strength`에 iceMask를 넣어 얼음 부분에만 요철이 생기게 한다.
+6. **재질 전환**: Base Color, Smoothness, Metallic을 모두 iceMask로 `Lerp`한다. 금속 표면도 얼면 비금속의 매끈한 얼음이 된다.
+7. **림 라이트 + 반짝임**: `Fresnel Effect`로 얼음 테두리를 빛나게 하고, 아주 잘게 깐 노이즈를 `Step`으로 잘라 드문드문 반짝이는 서리 알갱이를 만든다. 둘 다 iceMask를 곱해 얼음 부분에만 보인다.
+
+---
+
+## 04. LensFrost — 렌즈에 서리가 낀 화면
+
+![LensFrost](Screenshots/04_LensFrost.png)
+
+- 경로: `Assets/02. MyShaders/04_LensFrost/LensFrost.shadergraph` (`MyShaders/LensFrost`, URP Fullscreen 타깃)
+- 적용: 서리 전용 렌더러 `LensFrost_Renderer`의 **Full Screen Pass Renderer Feature**에 `LensFrost.mat`을 넣고, 데모 씬 카메라만 이 렌더러를 쓴다. 기본 렌더러는 건드리지 않아 다른 씬에는 영향이 없다.
+
+### 동작 원리 (그래프 순서대로)
+1. **화면 좌표**: `Screen Position`(0~1)을 기준으로, 무늬용 좌표는 `Screen` 노드의 Width/Height 비율을 곱해 화면 비율에 맞춘다 (무늬가 가로로 늘어나지 않게).
+2. **가장자리 거리**: 중심에서 0, 가장자리에서 1이 되는 값을 사각형 거리(`Maximum`)와 원형 거리(`Length`)의 중간으로 만든다. 그래서 네 변을 따라 얼되 모서리가 가장 먼저 언다.
+3. **서리 마스크**: 가장자리 거리에 노이즈를 더해 경계를 불규칙하게 만들고, `Smoothstep(1 − Coverage, 1 − Coverage + Softness)`로 마스크를 만든다. Coverage를 올리면 서리가 안쪽으로 파고든다.
+4. **굴절**: `Voronoi`의 셀 값(Cells)과 미세 노이즈로 셀마다 다른 방향의 오프셋을 만들어 화면 UV를 비튼다 → 뒤의 장면이 결정 면마다 다르게 꺾여 보인다. 화면 끝에서는 굴절을 0으로 줄여 끝 픽셀이 번져 보이지 않게 했다.
+5. **흐림**: `URP Sample Buffer`(BlitSource)로 장면을 중앙 + 상하좌우 5번 샘플링해 평균낸다. 샘플 간격에 마스크를 곱해 서리 부분만 흐려진다.
+6. **서리 색**: 마스크 × 불투명도에 중간 크기 노이즈(얼룩)와 미세 노이즈(입자감)를 섞어 서리 두께를 불균일하게 하고, 흐려진 장면과 서리 색을 `Lerp`한다.
+7. **반짝임**: 미세 노이즈의 가장 밝은 부분만 `Smoothstep`으로 골라 더해, 서리 속 얼음 알갱이가 반짝이게 한다.
