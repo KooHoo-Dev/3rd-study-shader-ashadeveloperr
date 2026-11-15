@@ -92,7 +92,12 @@ public static class FrozenSurfaceDemoBuilder
         m.SetFloat("_FreezeBottom", bottom);
         m.SetFloat("_FreezeTop", top);
         // 머티리얼에 저장된 예전 값이 남지 않도록 결정화 관련 값은 매번 기본값으로 맞춘다
-        m.SetColor("_EdgeGlowColor", new Color(0.2f, 0.6f, 1.2f));
+        // 얼음 색감: 채도가 아주 낮은 청회색
+        m.SetColor("_EdgeGlowColor", new Color(0.42f, 0.46f, 0.50f));
+        m.SetColor("_IceColor", new Color(0.76f, 0.79f, 0.82f));
+        m.SetColor("_IceDeepColor", new Color(0.34f, 0.38f, 0.42f));
+        m.SetColor("_RimColor", new Color(0.72f, 0.76f, 0.80f));
+        m.SetColor("_FrostColor", new Color(0.87f, 0.88f, 0.90f));
         m.SetFloat("_IceBumpStrength", 0.015f);
         m.SetFloat("_CrystalDensity", 28f);
     }
