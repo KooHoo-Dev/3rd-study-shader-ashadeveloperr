@@ -157,10 +157,16 @@
 | Edge Noise Scale / Amount | 얼음 경계의 일렁임 크기, 높낮이 차이(월드 단위) | Amount 0이면 반듯한 수평선 |
 | Ice Blend Width | 원래 표면 → 얼음으로 바뀌는 폭 | 작을수록 경계가 또렷 |
 | Edge Glow Color / Width | 얼음 경계에서 빛나는 띠의 색(HDR)과 두께 | 색을 검게 하면 빛나는 띠 없음 |
-| Ice Color / Ice Deep Color | 결정 가장자리(밝은)와 결정 안쪽(깊은) 색 | |
-| Crystal Density | 결정 무늬 촘촘함 | 크게 하면 잘게 부서진 얼음 |
-| Ice Smoothness | 얼음의 매끈함(반사) | |
-| Ice Bump Strength | 결정 요철 세기 | 크면 골프공처럼 보이므로 0.01~0.03 권장 |
+| Ice Color / Ice Deep Color | 밝은 결정과 어두운(깊은) 결정의 색. 결정마다 둘 사이 다른 색을 가짐 | |
+| Crystal Density | 결정 촘촘함 | 크게 하면 잘게 부서진 얼음 |
+| **Facet Tilt** | 결정 면이 제각각 기울어진 정도 | 클수록 깎은 보석처럼 결정마다 반사가 달라짐. 0이면 매끈한 얼음 |
+| **Grain Line Strength** | 결정 사이 하얀 경계선 세기 | 0이면 경계선 없음 |
+| **Ice Thickness Depth (world)** | 경계에서 이만큼 내려가야 완전히 두꺼운 얼음이 됨 | 크게 하면 원래 색이 비치는 살얼음 구간이 넓어짐 |
+| Ice Smoothness | 얼음의 매끈함(반사). 경계선 부분은 자동으로 거칠어짐 | |
+| Ice Bump Strength | 결정 안쪽의 미세한 요철 | 크면 골프공처럼 보이므로 0.01~0.03 권장 |
+| **Frost Color / Frost Amount** | 경계 위로 자라는 서리 바늘의 색과 진하기 | Amount 0이면 서리 없음 |
+| **Frost Reach (world)** | 서리 바늘이 경계 위로 뻗는 최대 길이 | |
+| **Frost Feather Scale** | 서리 바늘의 촘촘함 | 크면 가늘고 빽빽한 서리 |
 | Rim Color / Rim Power | 얼음 가장자리가 빛나는 색(HDR), 퍼짐 정도 | Power가 클수록 테두리에만 얇게 |
 | Sparkle Scale / Threshold / Intensity | 서리 반짝이 크기, 개수(높을수록 적음), 밝기 | |
 

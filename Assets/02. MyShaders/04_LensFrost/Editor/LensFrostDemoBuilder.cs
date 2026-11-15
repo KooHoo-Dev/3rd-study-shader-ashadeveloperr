@@ -96,8 +96,7 @@ public static class LensFrostDemoBuilder
         AssetDatabase.SaveAssets();
 
         // ---- 3. 데모 씬: 눈보라 씬을 복사하고 카메라만 서리 렌더러로 ----
-        AssetDatabase.DeleteAsset(ScenePath);
-        if (!AssetDatabase.CopyAsset(SourceScene, ScenePath)) { Debug.LogError("[Demo] Copy scene failed"); return false; }
+        if (!DemoUtil.CopySceneKeepGuid(SourceScene, ScenePath)) return false;
         var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         var cam = Camera.main;
         var camData = cam.GetUniversalAdditionalCameraData();

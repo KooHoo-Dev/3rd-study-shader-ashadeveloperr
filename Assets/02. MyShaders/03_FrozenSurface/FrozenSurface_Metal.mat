@@ -55,16 +55,22 @@ Material:
     - _AnimateSpeed: 0.6
     - _BaseMetallic: 1
     - _BaseSmoothness: 0.7
-    - _CrystalDensity: 14
+    - _CrystalDensity: 28
     - _EdgeGlowWidth: 0.06
     - _EdgeNoiseAmount: 0.25
     - _EdgeNoiseScale: 18
+    - _FacetTilt: 0.6
+    - _FeatherScale: 300
     - _FreezeAmount: 0.85
     - _FreezeBottom: 0.32104516
     - _FreezeTop: 1.2947688
+    - _FrostAmount: 0.9
+    - _FrostReach: 0.12
+    - _GrainLineStrength: 0.8
     - _IceBlend: 0.02
-    - _IceBumpStrength: 0.04
+    - _IceBumpStrength: 0.015
     - _IceSmoothness: 0.9
+    - _IceThickness: 0.15
     - _QueueControl: 0
     - _QueueOffset: 0
     - _RimPower: 3
@@ -73,7 +79,8 @@ Material:
     - _SparkleThreshold: 0.78
     m_Colors:
     - _BaseColor: {r: 0.85, g: 0.62, b: 0.25, a: 1}
-    - _EdgeGlowColor: {r: 0.4, g: 1.2, b: 2.4, a: 1}
+    - _EdgeGlowColor: {r: 0.2, g: 0.6, b: 1.2, a: 1}
+    - _FrostColor: {r: 0.92, g: 0.96, b: 1, a: 1}
     - _IceColor: {r: 0.8, g: 0.92, b: 1, a: 1}
     - _IceDeepColor: {r: 0.15999997, g: 0.39999998, b: 0.65999997, a: 1}
     - _RimColor: {r: 0.5, g: 0.85, b: 1.4, a: 1}

@@ -26,12 +26,7 @@ public static class FrozenSurfaceDemoBuilder
         var shader = AssetDatabase.LoadAssetAtPath<Shader>(GraphPath);
         if (!DemoUtil.CheckShader(shader, GraphPath)) return false;
 
-        AssetDatabase.DeleteAsset(ScenePath);   // 이전에 만든 데모 씬만 지운다 (원본 Study Shader는 그대로)
-        if (!AssetDatabase.CopyAsset(SourceScene, ScenePath))
-        {
-            Debug.LogError("[Demo] Could not copy " + SourceScene);
-            return false;
-        }
+        if (!DemoUtil.CopySceneKeepGuid(SourceScene, ScenePath)) return false;
         var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
 
         var root = GameObject.Find("ShaderBalls");
@@ -96,6 +91,10 @@ public static class FrozenSurfaceDemoBuilder
     {
         m.SetFloat("_FreezeBottom", bottom);
         m.SetFloat("_FreezeTop", top);
+        // 머티리얼에 저장된 예전 값이 남지 않도록 결정화 관련 값은 매번 기본값으로 맞춘다
+        m.SetColor("_EdgeGlowColor", new Color(0.2f, 0.6f, 1.2f));
+        m.SetFloat("_IceBumpStrength", 0.015f);
+        m.SetFloat("_CrystalDensity", 28f);
     }
 
     static void Assign(Transform root, string ballName, Material mat)

@@ -34,6 +34,20 @@ public static class DemoUtil
         return mat;
     }
 
+    /// 원본 씬 내용을 데모 씬으로 복사한다. 데모 씬이 이미 있으면 내용만 덮어써서 .meta(GUID)를 유지한다.
+    public static bool CopySceneKeepGuid(string source, string dest)
+    {
+        if (File.Exists(dest))
+        {
+            File.Copy(source, dest, true);
+            AssetDatabase.ImportAsset(dest, ImportAssetOptions.ForceUpdate);
+            return true;
+        }
+        if (AssetDatabase.CopyAsset(source, dest)) return true;
+        Debug.LogError($"[Demo] Could not copy {source} to {dest}");
+        return false;
+    }
+
     public static Transform FindDeep(Transform parent, string name)
     {
         foreach (var t in parent.GetComponentsInChildren<Transform>(true))
